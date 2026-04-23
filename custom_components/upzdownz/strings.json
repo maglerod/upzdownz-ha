@@ -22,6 +22,7 @@
           "interval": "Sync interval",
           "threshold": "Battery threshold (%)",
           "battery_report_all": "Report all batteries",
+          "lights_mode": "Collection mode",
           "domains_exclude": "Excluded domains",
           "calendar_entities": "Calendar entities",
           "weather_entity": "Weather entity"
@@ -30,6 +31,7 @@
           "source_name": "Enter the name you want to connect your widgets to. This name will appear in your UpzDownz dashboard.",
           "interval": "How often data is collected and pushed to UpzDownz.",
           "battery_report_all": "When enabled, all battery devices are reported regardless of level. When disabled, only devices below the threshold are reported.",
+          "lights_mode": "Per light sends one row per lamp and supports room grouping and brightness. Summary sends only the total count of lights on vs total.",
           "threshold": "Devices **below** this battery level will be reported. For example, 20 means any device below 20% appears in your dashboard. Current value: {threshold}%",
           "domains_exclude": "Entity domains to skip entirely. Default: group, scene, automation, script, zone and input_* domains."
         }
@@ -80,6 +82,7 @@
           "interval": "Sync interval",
           "threshold": "Battery threshold (%)",
           "battery_report_all": "Report all batteries",
+          "lights_mode": "Collection mode",
           "domains_exclude": "Excluded domains",
           "calendar_entities": "Calendar entities",
           "weather_entity": "Weather entity"
@@ -88,6 +91,7 @@
           "source_name": "Enter the name you want to connect your widgets to. This name will appear in your UpzDownz dashboard.",
           "interval": "How often data is collected and pushed to UpzDownz.",
           "battery_report_all": "When enabled, all battery devices are reported regardless of level. When disabled, only devices below the threshold are reported.",
+          "lights_mode": "Per light sends one row per lamp and supports room grouping and brightness. Summary sends only the total count of lights on vs total.",
           "threshold": "Devices **below** this battery level will be reported. Current value: {threshold}%",
           "domains_exclude": "Entity domains to skip entirely. Default: group, scene, automation, script, zone and input_* domains."
         }

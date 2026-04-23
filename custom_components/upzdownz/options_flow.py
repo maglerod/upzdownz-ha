@@ -22,9 +22,11 @@ from .const import (
     CONF_API_KEY, CONF_SOURCES, CONF_SOURCE_ID, CONF_SOURCE_NAME, CONF_SOURCE_TYPE,
     CONF_ENTITIES, CONF_INTERVAL, CONF_THRESHOLD, CONF_DOMAINS_EXCLUDE,
     CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY, CONF_BATTERY_REPORT_ALL,
+    CONF_LIGHTS_MODE,
     DEFAULT_BATTERY_THRESHOLD, DEFAULT_EXCLUDED_DOMAINS, DEFAULT_INTERVAL,
     SOURCE_TYPE_SENSORS, SOURCE_TYPE_BATTERY, SOURCE_TYPE_UNAVAILABLE,
-    SOURCE_TYPE_CALENDAR, SOURCE_TYPE_WEATHER, SOURCE_TYPE_CUSTOM, SOURCE_TYPE_LABELS,
+    SOURCE_TYPE_CALENDAR, SOURCE_TYPE_WEATHER, SOURCE_TYPE_LIGHTS, SOURCE_TYPE_CUSTOM,
+    SOURCE_TYPE_LABELS, LIGHTS_MODE_PER_LIGHT,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -122,6 +124,8 @@ class UpzDownzOptionsFlow(OptionsFlow):
                     source_cfg[CONF_CALENDAR_ENTITIES] = user_input.get(CONF_CALENDAR_ENTITIES, [])
                 elif self._adding_type == SOURCE_TYPE_WEATHER:
                     source_cfg[CONF_WEATHER_ENTITY] = user_input.get(CONF_WEATHER_ENTITY, "")
+                elif self._adding_type == SOURCE_TYPE_LIGHTS:
+                    source_cfg[CONF_LIGHTS_MODE] = user_input.get(CONF_LIGHTS_MODE, LIGHTS_MODE_PER_LIGHT)
                 try:
                     _LOGGER.debug("UpzDownz options: creating source '%s'", source_cfg[CONF_SOURCE_NAME])
                     created = await self._client.create_source(
