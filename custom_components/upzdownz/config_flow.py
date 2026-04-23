@@ -46,8 +46,6 @@ BATTERY_API_SCHEMA = [
     {"name": "below_threshold", "type": SCHEMA_TYPE_BOOLEAN},
     {"name": "recorded_at",     "type": SCHEMA_TYPE_STRING},
 ]
-    {"name": "recorded_at",     "type": SCHEMA_TYPE_STRING},
-]
 UNAVAILABLE_API_SCHEMA = [
     {"name": "entity_id",     "type": SCHEMA_TYPE_STRING},
     {"name": "domain",        "type": SCHEMA_TYPE_STRING},
