@@ -1,0 +1,118 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to UpzDownz",
+        "description": "Enter your UpzDownz API key. You can find it in the UpzDownz dashboard under **Settings → API**.",
+        "data": { "api_key": "API Key" },
+        "data_description": {
+          "api_key": "Your secret API key from the UpzDownz dashboard."
+        }
+      },
+      "pick_type": {
+        "title": "Add a Data Source",
+        "description": "Sources added so far: **{pending_sources}**\n\nSelect a source type to add, or choose *Done* to save.",
+        "data": { "action": "Source type" }
+      },
+      "configure_source": {
+        "title": "Configure {source_type}",
+        "description": "Give this data source a name and configure how it syncs to UpzDownz.",
+        "data": {
+          "source_name": "UpzDownz Datasource name",
+          "interval": "Sync interval",
+          "threshold": "Battery threshold (%)",
+          "domains_exclude": "Excluded domains",
+          "calendar_entities": "Calendar entities",
+          "weather_entity": "Weather entity"
+        },
+        "data_description": {
+          "source_name": "Enter the name you want to connect your widgets to. This name will appear in your UpzDownz dashboard.",
+          "interval": "How often data is collected and pushed to UpzDownz.",
+          "threshold": "Devices **below** this battery level will be reported. For example, 20 means any device below 20% appears in your dashboard. Current value: {threshold}%",
+          "domains_exclude": "Entity domains to skip entirely. Default: group, scene, automation, script, zone and input_* domains."
+        }
+      },
+      "pick_entities": {
+        "title": "Select Entities — {source_type}",
+        "description": "Search and select the entities to include. Each one becomes a data field in UpzDownz.",
+        "data": {
+          "source_name": "UpzDownz Datasource name",
+          "interval": "Sync interval",
+          "entity_ids": "Entities to include"
+        },
+        "data_description": {
+          "source_name": "Enter the name you want to connect your widgets to. This name will appear in your UpzDownz dashboard.",
+          "interval": "How often a snapshot of all selected entities is pushed to UpzDownz.",
+          "entity_ids": "Search by name or entity ID. Each selected entity becomes one field in your data."
+        }
+      },
+      "field_names": {
+        "title": "Confirm Field Names — {source_name}",
+        "description": "{entity_count} entities selected. These field names become the column names in UpzDownz that you use when building widgets.\n\nUse lowercase letters and underscores only, for example `indoor_temp` or `battery_level`."
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API key. Please check your key in the UpzDownz dashboard under Settings → API.",
+      "cannot_connect": "Could not connect to UpzDownz. Please check your internet connection and try again.",
+      "row_limit": "Your UpzDownz plan has reached its row limit. Please upgrade your plan or reduce the sync frequency.",
+      "server_error": "UpzDownz returned a server error. This is usually temporary — please try again.",
+      "no_entities_selected": "Please select at least one entity.",
+      "unknown": "An unexpected error occurred. Please check the Home Assistant logs for details."
+    },
+    "abort": {
+      "already_configured": "UpzDownz is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "manage": {
+        "title": "Manage Data Sources",
+        "description": "Add new data sources or remove existing ones.",
+        "data": { "action": "Action" }
+      },
+      "configure_source": {
+        "title": "Configure {source_type}",
+        "description": "Give this data source a name and configure how it syncs to UpzDownz.",
+        "data": {
+          "source_name": "UpzDownz Datasource name",
+          "interval": "Sync interval",
+          "threshold": "Battery threshold (%)",
+          "domains_exclude": "Excluded domains",
+          "calendar_entities": "Calendar entities",
+          "weather_entity": "Weather entity"
+        },
+        "data_description": {
+          "source_name": "Enter the name you want to connect your widgets to. This name will appear in your UpzDownz dashboard.",
+          "interval": "How often data is collected and pushed to UpzDownz.",
+          "threshold": "Devices **below** this battery level will be reported. Current value: {threshold}%",
+          "domains_exclude": "Entity domains to skip entirely. Default: group, scene, automation, script, zone and input_* domains."
+        }
+      },
+      "pick_entities": {
+        "title": "Select Entities — {source_type}",
+        "description": "Search and select the entities to include. Each one becomes a data field in UpzDownz.",
+        "data": {
+          "source_name": "UpzDownz Datasource name",
+          "interval": "Sync interval",
+          "entity_ids": "Entities to include"
+        },
+        "data_description": {
+          "source_name": "Enter the name you want to connect your widgets to. This name will appear in your UpzDownz dashboard.",
+          "interval": "How often a snapshot of all selected entities is pushed to UpzDownz.",
+          "entity_ids": "Search by name or entity ID. Each selected entity becomes one field in your data."
+        }
+      },
+      "field_names": {
+        "title": "Confirm Field Names — {source_name}",
+        "description": "{entity_count} entities selected. These field names become the column names in UpzDownz."
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to UpzDownz. Please check your internet connection and try again.",
+      "row_limit": "Your UpzDownz plan has reached its row limit. Please upgrade your plan or reduce sync frequency.",
+      "server_error": "UpzDownz returned a server error. Please try again.",
+      "no_entities_selected": "Please select at least one entity.",
+      "invalid_auth": "Invalid API key. Please reconfigure the integration."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "domain": "upzdownz",
+  "name": "UpzDownz Metric Dashboard",
+  "version": "1.0.0",
+  "documentation": "https://github.com/maglerod/upzdownz-ha#readme",
+  "issue_tracker": "https://github.com/maglerod/upzdownz-ha",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "cloud_push",
+  "integration_type": "service",
+  "config_flow": true,
+  "hacs": "integration"
+}
