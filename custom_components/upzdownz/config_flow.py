@@ -17,11 +17,12 @@ from .api import UpzDownzApiClient, UpzDownzApiError, UpzDownzAuthError, UpzDown
 from .const import (
     CONF_API_KEY, CONF_SOURCES, CONF_SOURCE_ID, CONF_SOURCE_NAME, CONF_SOURCE_TYPE,
     CONF_ENTITIES, CONF_INTERVAL, CONF_THRESHOLD, CONF_DOMAINS_EXCLUDE,
-    CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY, CONF_BATTERY_REPORT_ALL,
+    CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY, CONF_BATTERY_REPORT_ALL, CONF_LIGHTS_MODE,
     DEFAULT_BATTERY_THRESHOLD, DEFAULT_EXCLUDED_DOMAINS, DEFAULT_INTERVAL,
     DOMAIN, SOURCE_TYPE_SENSORS, SOURCE_TYPE_BATTERY, SOURCE_TYPE_UNAVAILABLE,
-    SOURCE_TYPE_CALENDAR, SOURCE_TYPE_WEATHER, SOURCE_TYPE_CUSTOM, SOURCE_TYPE_LABELS,
-    SCHEMA_TYPE_DECIMAL, SCHEMA_TYPE_STRING, SCHEMA_TYPE_BOOLEAN,
+    SOURCE_TYPE_CALENDAR, SOURCE_TYPE_WEATHER, SOURCE_TYPE_LIGHTS, SOURCE_TYPE_CUSTOM,
+    SOURCE_TYPE_LABELS, LIGHTS_MODE_PER_LIGHT, LIGHTS_MODE_SUMMARY,
+    SCHEMA_TYPE_DECIMAL, SCHEMA_TYPE_STRING, SCHEMA_TYPE_BOOLEAN, SCHEMA_TYPE_INTEGER,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,6 +46,8 @@ BATTERY_API_SCHEMA = [
     {"name": "below_threshold", "type": SCHEMA_TYPE_BOOLEAN},
     {"name": "recorded_at",     "type": SCHEMA_TYPE_STRING},
 ]
+    {"name": "recorded_at",     "type": SCHEMA_TYPE_STRING},
+]
 UNAVAILABLE_API_SCHEMA = [
     {"name": "entity_id",     "type": SCHEMA_TYPE_STRING},
     {"name": "domain",        "type": SCHEMA_TYPE_STRING},
@@ -61,15 +64,35 @@ CALENDAR_API_SCHEMA = [
     {"name": "recorded_at", "type": SCHEMA_TYPE_STRING},
 ]
 WEATHER_API_SCHEMA = [
-    {"name": "type",          "type": SCHEMA_TYPE_STRING},
     {"name": "condition",     "type": SCHEMA_TYPE_STRING},
     {"name": "temperature",   "type": SCHEMA_TYPE_DECIMAL},
     {"name": "humidity",      "type": SCHEMA_TYPE_DECIMAL},
     {"name": "wind_speed",    "type": SCHEMA_TYPE_DECIMAL},
+    {"name": "wind_bearing",  "type": SCHEMA_TYPE_DECIMAL},
     {"name": "pressure",      "type": SCHEMA_TYPE_DECIMAL},
-    {"name": "templow",       "type": SCHEMA_TYPE_DECIMAL},
-    {"name": "precipitation", "type": SCHEMA_TYPE_DECIMAL},
-    {"name": "datetime",      "type": SCHEMA_TYPE_STRING},
+    {"name": "feels_like",    "type": SCHEMA_TYPE_DECIMAL},
+    {"name": "forecast",      "type": SCHEMA_TYPE_STRING},
+    {"name": "recorded_at",   "type": SCHEMA_TYPE_STRING},
+]
+LIGHTS_PER_LIGHT_API_SCHEMA = [
+    {"name": "entity_id",     "type": SCHEMA_TYPE_STRING},
+    {"name": "friendly_name", "type": SCHEMA_TYPE_STRING},
+    {"name": "state",         "type": SCHEMA_TYPE_STRING},
+    {"name": "brightness",    "type": SCHEMA_TYPE_INTEGER},
+    {"name": "area",          "type": SCHEMA_TYPE_STRING},
+    {"name": "recorded_at",   "type": SCHEMA_TYPE_STRING},
+]
+LIGHTS_SUMMARY_API_SCHEMA = [
+    {"name": "lights_on",    "type": SCHEMA_TYPE_INTEGER},
+    {"name": "lights_total", "type": SCHEMA_TYPE_INTEGER},
+    {"name": "recorded_at",  "type": SCHEMA_TYPE_STRING},
+]
+UNAVAILABLE_API_SCHEMA = [
+    {"name": "entity_id",     "type": SCHEMA_TYPE_STRING},
+    {"name": "friendly_name", "type": SCHEMA_TYPE_STRING},
+    {"name": "domain",        "type": SCHEMA_TYPE_STRING},
+    {"name": "state",         "type": SCHEMA_TYPE_STRING},
+    {"name": "last_changed",  "type": SCHEMA_TYPE_STRING},
     {"name": "recorded_at",   "type": SCHEMA_TYPE_STRING},
 ]
 
@@ -103,6 +126,9 @@ def _api_schema_for(source_type: str, source_cfg: dict, hass=None) -> list[dict]
     if source_type == SOURCE_TYPE_UNAVAILABLE: return UNAVAILABLE_API_SCHEMA
     if source_type == SOURCE_TYPE_CALENDAR:    return CALENDAR_API_SCHEMA
     if source_type == SOURCE_TYPE_WEATHER:     return WEATHER_API_SCHEMA
+    if source_type == SOURCE_TYPE_LIGHTS:
+        mode = source_cfg.get(CONF_LIGHTS_MODE, LIGHTS_MODE_PER_LIGHT)
+        return LIGHTS_SUMMARY_API_SCHEMA if mode == LIGHTS_MODE_SUMMARY else LIGHTS_PER_LIGHT_API_SCHEMA
     entities = source_cfg.get(CONF_ENTITIES, {})
     if hass:
         return _infer_api_schema(hass, entities)
@@ -164,11 +190,27 @@ def _field_names_form(entity_ids: list[str]):
         for eid in entity_ids
     })
 
+def _lights_form():
+    return vol.Schema({
+        **_name_interval_fields("Light Status", 300),
+        vol.Required(CONF_LIGHTS_MODE, default=LIGHTS_MODE_PER_LIGHT):
+            selector.selector({
+                "select": {
+                    "options": [
+                        {"value": LIGHTS_MODE_PER_LIGHT, "label": "Per light — one row per lamp (supports room grouping)"},
+                        {"value": LIGHTS_MODE_SUMMARY,   "label": "Summary only — total lights on vs total"},
+                    ],
+                    "mode": "list",
+                }
+            }),
+    })
+
 FORM_FOR_TYPE = {
     SOURCE_TYPE_BATTERY:     _battery_form,
     SOURCE_TYPE_UNAVAILABLE: _unavailable_form,
     SOURCE_TYPE_CALENDAR:    _calendar_form,
     SOURCE_TYPE_WEATHER:     _weather_form,
+    SOURCE_TYPE_LIGHTS:      _lights_form,
 }
 
 # ── Config flow ───────────────────────────────────────────────────────────────
@@ -286,6 +328,8 @@ class UpzDownzConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     source_cfg[CONF_CALENDAR_ENTITIES] = user_input.get(CONF_CALENDAR_ENTITIES, [])
                 elif self._adding_type == SOURCE_TYPE_WEATHER:
                     source_cfg[CONF_WEATHER_ENTITY] = user_input.get(CONF_WEATHER_ENTITY, "")
+                elif self._adding_type == SOURCE_TYPE_LIGHTS:
+                    source_cfg[CONF_LIGHTS_MODE] = user_input.get(CONF_LIGHTS_MODE, LIGHTS_MODE_PER_LIGHT)
                 try:
                     _LOGGER.debug("UpzDownz: creating source '%s' type=%s", source_cfg[CONF_SOURCE_NAME], self._adding_type)
                     created = await self._client.create_source(
