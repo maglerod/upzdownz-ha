@@ -1,10 +1,8 @@
 <p align="center">
-  <img src="images/upzdownz-logo-white-text.png" width="30%">
+  <img src="images/upzdownz-logo-white-text.png" width="40%">
 </p>
 
-<p align="center">
-  <b>Home Assistant Integration</b>
-</p>
+<h3 align="center">Home Assistant Integration</h3>
 
 A HACS-compatible custom component that automatically collects "selected" data from Home Assistant and pushes it to your [UpzDownz Metric Dashboard](https://upzdownz.com). Configure everything through the Home Assistant UI — no YAML required.
 
