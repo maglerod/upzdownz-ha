@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-04-23
+
+### Added
+- **Light Status** — new automatic source type. Collects all `light.*` entities every sync cycle.
+  - *Per light* mode: one row per lamp with `entity_id`, `friendly_name`, `state`, `brightness` (0–255) and `area` — supports room grouping in the Light Status widget.
+  - *Summary* mode: a single row with `lights_on` and `lights_total` counts.
+- **Weather** — updated payload to match widget spec:
+  - Added `feels_like`, `wind_bearing` fields
+  - `forecast` is now a single embedded JSON array in one row (instead of separate rows per day), mapping directly to HA's forecast attribute format.
+- **Unavailable Entities** — added `state` field (`unavailable` / `unknown`) to each row.
+
+
 ## [1.1.0] - 2026-04-23
 
 ### Added
