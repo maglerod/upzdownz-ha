@@ -21,7 +21,7 @@ from .config_flow import (
 from .const import (
     CONF_API_KEY, CONF_SOURCES, CONF_SOURCE_ID, CONF_SOURCE_NAME, CONF_SOURCE_TYPE,
     CONF_ENTITIES, CONF_INTERVAL, CONF_THRESHOLD, CONF_DOMAINS_EXCLUDE,
-    CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY,
+    CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY, CONF_BATTERY_REPORT_ALL,
     DEFAULT_BATTERY_THRESHOLD, DEFAULT_EXCLUDED_DOMAINS, DEFAULT_INTERVAL,
     SOURCE_TYPE_SENSORS, SOURCE_TYPE_BATTERY, SOURCE_TYPE_UNAVAILABLE,
     SOURCE_TYPE_CALENDAR, SOURCE_TYPE_WEATHER, SOURCE_TYPE_CUSTOM, SOURCE_TYPE_LABELS,
@@ -114,6 +114,7 @@ class UpzDownzOptionsFlow(OptionsFlow):
                 }
                 if self._adding_type == SOURCE_TYPE_BATTERY:
                     source_cfg[CONF_THRESHOLD] = threshold_val
+                    source_cfg[CONF_BATTERY_REPORT_ALL] = user_input.get(CONF_BATTERY_REPORT_ALL, False)
                 elif self._adding_type == SOURCE_TYPE_UNAVAILABLE:
                     raw = user_input.get(CONF_DOMAINS_EXCLUDE, "")
                     source_cfg[CONF_DOMAINS_EXCLUDE] = _parse_domain_list(raw) or DEFAULT_EXCLUDED_DOMAINS

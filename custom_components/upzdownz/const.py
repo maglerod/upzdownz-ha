@@ -47,6 +47,7 @@ DEFAULT_INTERVAL = 300
 
 # Battery threshold
 DEFAULT_BATTERY_THRESHOLD = 20
+CONF_BATTERY_REPORT_ALL = "battery_report_all"
 
 # Domains excluded from "unavailable" source by default
 DEFAULT_EXCLUDED_DOMAINS = ["group", "scene", "automation", "script", "zone", "input_boolean", "input_number", "input_select", "input_text"]

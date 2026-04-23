@@ -17,7 +17,7 @@ from .api import UpzDownzApiClient, UpzDownzApiError, UpzDownzAuthError, UpzDown
 from .const import (
     CONF_API_KEY, CONF_SOURCES, CONF_SOURCE_ID, CONF_SOURCE_NAME, CONF_SOURCE_TYPE,
     CONF_ENTITIES, CONF_INTERVAL, CONF_THRESHOLD, CONF_DOMAINS_EXCLUDE,
-    CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY,
+    CONF_CALENDAR_ENTITIES, CONF_WEATHER_ENTITY, CONF_BATTERY_REPORT_ALL,
     DEFAULT_BATTERY_THRESHOLD, DEFAULT_EXCLUDED_DOMAINS, DEFAULT_INTERVAL,
     DOMAIN, SOURCE_TYPE_SENSORS, SOURCE_TYPE_BATTERY, SOURCE_TYPE_UNAVAILABLE,
     SOURCE_TYPE_CALENDAR, SOURCE_TYPE_WEATHER, SOURCE_TYPE_CUSTOM, SOURCE_TYPE_LABELS,
@@ -39,10 +39,11 @@ INTERVAL_OPTIONS = [
 # ── Fixed API schemas ─────────────────────────────────────────────────────────
 
 BATTERY_API_SCHEMA = [
-    {"name": "entity_id",     "type": SCHEMA_TYPE_STRING},
-    {"name": "friendly_name", "type": SCHEMA_TYPE_STRING},
-    {"name": "battery_level", "type": SCHEMA_TYPE_DECIMAL},
-    {"name": "recorded_at",   "type": SCHEMA_TYPE_STRING},
+    {"name": "entity_id",       "type": SCHEMA_TYPE_STRING},
+    {"name": "friendly_name",   "type": SCHEMA_TYPE_STRING},
+    {"name": "battery_level",   "type": SCHEMA_TYPE_DECIMAL},
+    {"name": "below_threshold", "type": SCHEMA_TYPE_BOOLEAN},
+    {"name": "recorded_at",     "type": SCHEMA_TYPE_STRING},
 ]
 UNAVAILABLE_API_SCHEMA = [
     {"name": "entity_id",     "type": SCHEMA_TYPE_STRING},
@@ -122,6 +123,8 @@ def _name_interval_fields(default_name="", default_interval=DEFAULT_INTERVAL):
 def _battery_form():
     return vol.Schema({
         **_name_interval_fields("Battery Alerts", 1800),
+        vol.Required(CONF_BATTERY_REPORT_ALL, default=False):
+            selector.selector({"boolean": {}}),
         vol.Required(CONF_THRESHOLD, default=DEFAULT_BATTERY_THRESHOLD):
             selector.selector({"number": {"min": 5, "max": 50, "step": 1, "unit_of_measurement": "%", "mode": "slider"}}),
     })
@@ -275,6 +278,7 @@ class UpzDownzConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
                 if self._adding_type == SOURCE_TYPE_BATTERY:
                     source_cfg[CONF_THRESHOLD] = threshold_val
+                    source_cfg[CONF_BATTERY_REPORT_ALL] = user_input.get(CONF_BATTERY_REPORT_ALL, False)
                 elif self._adding_type == SOURCE_TYPE_UNAVAILABLE:
                     raw = user_input.get(CONF_DOMAINS_EXCLUDE, "")
                     source_cfg[CONF_DOMAINS_EXCLUDE] = _parse_domain_list(raw) or DEFAULT_EXCLUDED_DOMAINS

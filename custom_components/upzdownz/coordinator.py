@@ -188,8 +188,9 @@ class UpzDownzSourceCoordinator(DataUpdateCoordinator):
         return [row] if len(row) > 1 else []
 
     async def _collect_battery(self) -> list[dict]:
-        """Collect one row per low-battery entity."""
+        """Collect battery rows — either all devices or only those below threshold."""
         threshold = self.source_config.get(CONF_THRESHOLD, DEFAULT_BATTERY_THRESHOLD)
+        report_all = self.source_config.get("battery_report_all", False)
         rows = []
         recorded_at = _utcnow_iso()
         for state in self.hass.states.async_all():
@@ -199,11 +200,12 @@ class UpzDownzSourceCoordinator(DataUpdateCoordinator):
                 level = float(state.state)
             except (ValueError, TypeError):
                 continue
-            if level < threshold:
+            if report_all or level < threshold:
                 rows.append({
                     "entity_id": state.entity_id,
                     "friendly_name": state.attributes.get("friendly_name", state.entity_id),
                     "battery_level": level,
+                    "below_threshold": level < threshold,
                     "recorded_at": recorded_at,
                 })
         return rows
