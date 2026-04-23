@@ -59,7 +59,7 @@
 
 ### Method B — Manual
 
-1. Download `upzdownz_custom_component.zip` from the [latest release](https://github.com/maglerod/upzdownz-ha/releases).
+1. Download `ZIP file` from the [latest release](https://github.com/maglerod/upzdownz-ha/releases).
 2. Extract the archive. It contains a single folder named `upzdownz`.
 3. Copy the folder to your Home Assistant configuration directory:
 
