@@ -2,7 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2025-04-23
+## [1.1.0] - 2026-04-23
+
+### Added
+- Battery Alerts: new toggle — **Report all batteries** — when enabled, all battery devices are reported regardless of level. Each row now also includes a `below_threshold` boolean field so you can filter in UpzDownz widgets.
+
+## [1.0.0] - 2026-04-23
 
 ### Added
 - Initial release
